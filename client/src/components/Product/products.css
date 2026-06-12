@@ -1,0 +1,75 @@
+.table-container {
+  width: 100%;
+  max-width: 100%;
+  height: 490px;
+  max-height: 500px;
+  overflow-x: auto;
+  border: 1px solid #c6ced5;  /*#eef2f5*/
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+}
+
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  font-size: 14px;
+  color: #333333;
+}
+
+.product-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--primary); /* Sleek slate dark header */
+}
+
+.product-table th {
+  padding: 16px 20px;
+  color: #ffffff;
+  font-weight: 600;
+  text-transform: capitalize; /* Corrects variable casing automatically */
+  letter-spacing: 0.5px;
+}
+
+/* Shared structural sizing rule for all rows */
+.table-row {
+  border-bottom: 1px solid #eef2f5;
+  transition: background-color 0.2s ease;
+}
+
+/* Zebra striping effect for clean contrast */
+tbody .table-row:nth-child(even) {
+  background-color: #e9edf1;
+}
+
+/* Row-level hover animations */
+tbody .table-row:hover {
+  background-color: #bccfe1;
+}
+
+/* Data cell constraints */
+.product-table td {
+  padding: 16px 20px;
+  line-height: 1.5;
+  vertical-align: middle;
+  white-space: nowrap; /* Prevents text ugly text wrapping */
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Appends ... if string is too massive */
+}
+
+/* Clean corner-rounding mask adjustments */
+.table-container::-webkit-scrollbar {
+  height: 6px;
+  width: 8px;
+  border-radius: 5px;
+}
+.table-container::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 8px;
+}
