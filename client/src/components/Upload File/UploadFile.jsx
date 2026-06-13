@@ -26,7 +26,7 @@ export const UploadFile = () => {
         showSuccessFeedback(data?.message || data?.data?.message);
       }
     } catch (error) {
-      showErrorFeedback(error.message);
+      showErrorFeedback(error.message || error?.data?.message);
     }
   };
 
@@ -38,9 +38,12 @@ export const UploadFile = () => {
         type="file"
         onChange={handleOnFileChange}
         className="hidden"
-        disabled={isLoading ? true : false}
+        disabled={isLoading}
       />
-      <label htmlFor="file" className="custom-upload">
+      <label
+        htmlFor="file"
+        className={`custom-upload ${isLoading ? "disabled" : ""}`}
+      >
         {file ? (
           <>
             <MdDone size="1.5em" />

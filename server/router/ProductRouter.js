@@ -19,5 +19,6 @@ const uploads = multer({ storage })
 
 router.route('/getAllProducts').get(ProductController.getAllProducts);
 router.route('/updateDataFromFile').post(uploads.single('file'), ProductController.updateDataFromFile);
+router.route('/exportData').post(ProductController.exportData);
 
 module.exports = router
