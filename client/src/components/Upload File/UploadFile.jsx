@@ -1,17 +1,33 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import "./uploadFile.css";
 import { MdUploadFile, MdDone } from "react-icons/md";
 import { useUpdateDataFromFileMutation } from "../../store/productApi";
+import { FeedbackContext } from "../../context/createContext";
 
 export const UploadFile = () => {
+  const { showSuccessFeedback, showErrorFeedback } =
+    useContext(FeedbackContext);
+
   const [file, setFile] = useState(null);
-  const [updateDataFromFile, { data, isLoading, error }] = useUpdateDataFromFileMutation();
+  const [updateDataFromFile, { isLoading, error }] =
+    useUpdateDataFromFileMutation();
 
-  const handleOnFileChange = async(event) => {
-    const file = event.target.files[0];
-    if (file) setFile(file);
+  const handleOnFileChange = async (event) => {
+    try {
+      const file = event.target.files[0];
+      if (file) setFile(file);
 
-    await updateDataFromFile(file);
+      const formData = new FormData();
+      formData.append("file", file);
+      const data = await updateDataFromFile(formData);
+
+      if (data) {
+        console.log(data);
+        showSuccessFeedback(data?.message || data?.data?.message);
+      }
+    } catch (error) {
+      showErrorFeedback(error.message);
+    }
   };
 
   return (
@@ -22,6 +38,7 @@ export const UploadFile = () => {
         type="file"
         onChange={handleOnFileChange}
         className="hidden"
+        disabled={isLoading ? true : false}
       />
       <label htmlFor="file" className="custom-upload">
         {file ? (
@@ -36,6 +53,7 @@ export const UploadFile = () => {
           </>
         )}
       </label>
+      <p>{error && error.message}</p>
     </div>
   );
 };
