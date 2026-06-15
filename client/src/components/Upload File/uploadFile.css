@@ -7,9 +7,9 @@
   overflow: hidden;
 }
 
-.upload-container {
+/* .upload-container { */
   /* align-self: flex-start; */
-}
+/* } */
 
 .custom-upload {
   display: flex;

@@ -36,5 +36,36 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  gap: 1rem;
+  margin-top: 30px;
   /* align-self: flex-start; */
+}
+
+input[type="date"] {
+  font-family: "Segoe UI", sans-serif;
+  font-size: 16px;
+  padding: 10px 15px;
+  color: #333333;
+  background-color: #ffffff;
+  border: 2px solid #cccccc;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.custom-date-input:focus {
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
+}
+
+.date-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+label {
+  margin-right: 20px;
 }

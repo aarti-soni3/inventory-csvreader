@@ -43,28 +43,42 @@ module.exports.updateDataFromFile = async (req, res) => {
 module.exports.exportData = async (req, res) => {
 
     try {
-        const data = req.body;
-        console.log(data)
-
         const orders = await Order.findAll({ raw: true });
-        console.log(orders);
+
+        const uniqueOrders = Object.values(await orders.reduce(async (accumlatorPromise, currentValue) => {
+
+            const acc = await accumlatorPromise;
+
+            if (!acc[currentValue.productId]) {
+                console.log('currentValue: ', currentValue)
+                const product = await Products.findByPk(currentValue.productId);
+                const updatedProduct = { ...currentValue, price: product.price }
+                console.log('updatedProduct: ', updatedProduct)
+                acc[currentValue.productId] = updatedProduct;
+            }
+            else {
+                acc[currentValue.productId].quantity += currentValue.quantity;
+            }
+            return acc;
+        }, Promise.resolve({})));
 
         const workbook = createWorkbook('Orders');
         const worksheet = workbook.getWorksheet('Orders');
 
         worksheet.columns = [
             { header: 'Order ID', key: 'orderId', width: 40 },
-            { header: 'Quantity', key: 'quantity', width: 10 },
-            { header: 'Created At', key: 'createdAt', width: 10 },
-            { header: 'Updated At', key: 'updatedAt', width: 10 },
             { header: 'Product Id', key: 'productId', width: 40 },
+            { header: 'Quantity', key: 'quantity', width: 10 },
+            { header: 'Price', key: 'price', width: 10 },
+            { header: 'Created At', key: 'createdAt', width: 12 },
+            { header: 'Updated At', key: 'updatedAt', width: 12 },
         ]
 
-        const newRows = worksheet.addRows(orders);
+        const newRows = worksheet.addRows(uniqueOrders);
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Content-Disposition', 'attachment; filename="orders.xlsx"')
 
-        const buffer = await workbook.xlsx.writeBuffer();   
+        const buffer = await workbook.xlsx.writeBuffer();
         return res.status(200).send(buffer);
     } catch (error) {
         return res.status(500).json({ message: 'Internal server error' })
