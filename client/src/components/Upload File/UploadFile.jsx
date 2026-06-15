@@ -19,14 +19,10 @@ export const UploadFile = () => {
 
       const formData = new FormData();
       formData.append("file", file);
-      const data = await updateDataFromFile(formData);
-
-      if (data) {
-        console.log(data);
-        showSuccessFeedback(data?.message || data?.data?.message);
-      }
-    } catch (error) {
-      showErrorFeedback(error.message || error?.data?.message);
+      const data = await updateDataFromFile(formData).unwrap();
+      if (data) showSuccessFeedback(data?.message || data?.data?.message);
+    } catch (err) {
+      showErrorFeedback(err.message || err?.data?.message);
     }
   };
 

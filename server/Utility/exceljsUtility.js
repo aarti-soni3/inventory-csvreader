@@ -23,11 +23,11 @@ const createWorkbook = (sheetName) => {
 const orderTableColumns = [
     { header: 'Order ID', key: 'orderId', width: 40 },
     { header: 'Product Id', key: 'productId', width: 40 },
-    { header: 'Quantity', key: 'quantity', width: 10 },
-    { header: 'Price', key: 'price', width: 10 },
-    { header: 'Tax percentage', key: 'taxPercentage', width: 15 },
-    { header: 'Sub Total (Quantity * Price)', key: 'subTotal', width: 10 },
-    { header: 'Grand Total', key: 'grandTotal', width: 12 },
+    { header: 'Quantity', key: 'quantity', width: 12 },
+    { header: 'Price', key: 'price', width: 15 },
+    { header: 'Tax percentage', key: 'taxPercentage', width: 20 },
+    { header: 'Sub Total (Quantity * Price)', key: 'subTotal', width: 15 },
+    { header: 'Grand Total', key: 'grandTotal', width: 20 },
     { header: 'Created At', key: 'createdAt', width: 12 },
     { header: 'Updated At', key: 'updatedAt', width: 12 },
 ]
