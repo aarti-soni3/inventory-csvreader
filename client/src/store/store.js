@@ -8,13 +8,13 @@ export const store = configureStore({
     },
     middleware: (getDefaultMiddlware) => getDefaultMiddlware(
         {
-            // serializableCheck: {
-            //     ignoreActions: [
-            //         'api/executeMutation/fulfilled',
-            //         'api/executeQuery/fulfilled'
-            //     ],
-            //     ignoredPaths: ['api.mutations', 'api.queries'],
-            // }
+            serializableCheck: {
+                ignoreActions: [
+                    'api/executeMutation/fulfilled',
+                    'api/executeQuery/fulfilled'
+                ],
+                ignoredPaths: ['api.mutations', 'api.queries'],
+            }
         }
     ).concat(api.middleware)
 })

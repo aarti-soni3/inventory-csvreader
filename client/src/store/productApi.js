@@ -15,7 +15,15 @@ const productApi = api.injectEndpoints({
                 url: '/products/exportData',
                 method: 'POST',
                 body: data,
-                responseHandler: (response) => response.blob()
+                responseHandler: async (response) => {
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.log(typeof errorData)
+                    }
+
+                    return response.blob()
+                }
             }),
             extraOptions: { maxAge: 0 },
         })

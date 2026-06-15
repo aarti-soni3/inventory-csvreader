@@ -44,6 +44,10 @@ module.exports.Products = sequelize.define(
             type: DataTypes.FLOAT,
             allowNull: true
         },
+        taxPercentage: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        }
     },
     {
         underscored: true,

@@ -2,7 +2,10 @@ const { Products } = require("../model/Products");
 const csv = require('csv-parser');
 const fs = require('fs');
 const { Order } = require("../model/Orders");
-const { createWorkbook } = require("../Utility/exceljsUtility");
+const { createWorkbook, orderTableColumns, setOrderTotalFormula } = require("../Utility/exceljsUtility");
+const { uniqueOrderReducer, productDataBykey } = require("../Utility/productUtility");
+const { start } = require("repl");
+const { Op } = require("sequelize");
 
 module.exports.getAllProducts = async (req, res) => {
     try {
@@ -42,45 +45,50 @@ module.exports.updateDataFromFile = async (req, res) => {
 
 module.exports.exportData = async (req, res) => {
 
+    const startDate = new Date(req.body.startDate)
+    const endDate = new Date(req.body.endDate)
+
+    if (!startDate || !endDate)
+        return res.status(400).json({ message: 'Invalid Data!' });
+
+    console.log(startDate.toLocaleDateString(), endDate.toLocaleDateString())
     try {
-        const orders = await Order.findAll({ raw: true });
+        const orders = await Order.findAll({
+            where: { createdAt: { [Op.between]: [startDate, endDate] }, },
+            raw: true
+        });
 
-        const uniqueOrders = Object.values(await orders.reduce(async (accumlatorPromise, currentValue) => {
+        if (!orders || orders.length <= 0)
+            return res.status(404).json({ message: 'Orders not found!' });
 
-            const acc = await accumlatorPromise;
+        console.log('orders: ', orders)
+        const idsToFind = await orders.map((order) => order.productId)
+        const products = await Products.findAll({
+            attributes: ['productId', 'price', 'taxPercentage'],
+            where: { productId: idsToFind },
+            raw: true,
+        });
 
-            if (!acc[currentValue.productId]) {
-                console.log('currentValue: ', currentValue)
-                const product = await Products.findByPk(currentValue.productId);
-                const updatedProduct = { ...currentValue, price: product.price }
-                console.log('updatedProduct: ', updatedProduct)
-                acc[currentValue.productId] = updatedProduct;
-            }
-            else {
-                acc[currentValue.productId].quantity += currentValue.quantity;
-            }
-            return acc;
-        }, Promise.resolve({})));
+        // console.log('products: ', products)
+        const productData = productDataBykey(products);
+        // console.log('productData: ', productData)
+        const uniqueOrders = uniqueOrderReducer(orders, productData);
+        // console.log('unique orders :', uniqueOrders)
 
         const workbook = createWorkbook('Orders');
         const worksheet = workbook.getWorksheet('Orders');
-
-        worksheet.columns = [
-            { header: 'Order ID', key: 'orderId', width: 40 },
-            { header: 'Product Id', key: 'productId', width: 40 },
-            { header: 'Quantity', key: 'quantity', width: 10 },
-            { header: 'Price', key: 'price', width: 10 },
-            { header: 'Created At', key: 'createdAt', width: 12 },
-            { header: 'Updated At', key: 'updatedAt', width: 12 },
-        ]
+        worksheet.columns = orderTableColumns;
 
         const newRows = worksheet.addRows(uniqueOrders);
+        setOrderTotalFormula(worksheet);
+
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Content-Disposition', 'attachment; filename="orders.xlsx"')
 
         const buffer = await workbook.xlsx.writeBuffer();
         return res.status(200).send(buffer);
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ message: 'Internal server error' })
     }
 }

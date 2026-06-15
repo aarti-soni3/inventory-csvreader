@@ -20,14 +20,14 @@ export const Filter = () => {
 
   const handleOnClick = async () => {
     try {
-      const dateRange = { startDate: startDate, endDate: endDate };
+      const dateRange = {
+        startDate: startDate,
+        endDate: endDate,
+      };
       const blob = await exportData(dateRange).unwrap();
 
       if (blob) {
-        console.log(blob);
         const url = window.URL.createObjectURL(blob);
-        console.log(url);
-
         const link = document.createElement("a");
         link.href = url;
         link.setAttribute("download", "orders.xlsx");
@@ -37,7 +37,14 @@ export const Filter = () => {
         showSuccessFeedback("Dowloading Excel File");
       }
     } catch (error) {
-      showErrorFeedback(error?.message || error?.data?.message);
+      console.log(typeof error, error);
+
+      if (typeof error?.data !== "object") {
+        const data = JSON.parse(error?.data);
+        showErrorFeedback(data?.message || data?.data?.message);
+      } else {
+        showErrorFeedback(error?.message || error?.data?.message);
+      }
     }
   };
 
@@ -50,8 +57,9 @@ export const Filter = () => {
             type="date"
             value={startDate}
             onChange={(event) => {
-              console.log(event.target.value);
-              setStartDate(event.target.value);
+              setStartDate(
+                new Date(event.target.value).toISOString().split("T")[0],
+              );
             }}
           />
         </div>
@@ -62,7 +70,9 @@ export const Filter = () => {
             type="date"
             value={endDate}
             onChange={(event) => {
-              setEndDate(event.target.value);
+              setEndDate(
+                new Date(event.target.value).toISOString().split("T")[0],
+              );
             }}
           />
         </div>
