@@ -6,6 +6,7 @@ const { createWorkbook, orderTableColumns, setOrderTotalFormula } = require("../
 const { uniqueOrderReducer, productDataBykey } = require("../Utility/productUtility");
 const { start } = require("repl");
 const { Op } = require("sequelize");
+const { deleteFile } = require("../Utility/fileUtility");
 
 module.exports.getAllProducts = async (req, res) => {
     try {
@@ -35,8 +36,11 @@ module.exports.updateDataFromFile = async (req, res) => {
                 conflictAttributes: ['productId'],
                 updateOnDuplicate: ['productName', 'quantity', 'price', 'manufacture', 'category', 'expirationDate', 'location', 'barcode', 'weight', 'updatedAt']
             })
+            deleteFile(file)
             return res.status(200).json({ message: 'Product Data Updated!' })
         }
+
+        deleteFile(file);
         return res.status(400).json({ message: 'invalid data' })
     } catch (error) {
         return res.status(500).json({ message: error.message })
