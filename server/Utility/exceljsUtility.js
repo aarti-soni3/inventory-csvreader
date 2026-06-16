@@ -21,15 +21,15 @@ const createWorkbook = (sheetName) => {
 }
 
 const orderTableColumns = [
-    { header: 'Order ID', key: 'orderId', width: 40 },
-    { header: 'Product Id', key: 'productId', width: 40 },
-    { header: 'Quantity', key: 'quantity', width: 12 },
-    { header: 'Price', key: 'price', width: 15 },
-    { header: 'Tax percentage', key: 'taxPercentage', width: 20 },
-    { header: 'Sub Total (Quantity * Price)', key: 'subTotal', width: 15 },
-    { header: 'Grand Total', key: 'grandTotal', width: 20 },
-    { header: 'Created At', key: 'createdAt', width: 12 },
-    { header: 'Updated At', key: 'updatedAt', width: 12 },
+    { header: ['Orders', 'Order ID'], key: 'orderId', width: 40 },
+    { header: ['Orders', 'Product Id'], key: 'productId', width: 40 },
+    { header: ['Orders', 'Quantity'], key: 'quantity', width: 12 },
+    { header: ['Orders', 'Price'], key: 'price', width: 15 },
+    { header: ['Orders', 'Tax percentage'], key: 'taxPercentage', width: 20 },
+    { header: ['Orders', 'Sub Total (Quantity * Price)'], key: 'subTotal', width: 15 },
+    { header: ['Orders', 'Grand Total'], key: 'grandTotal', width: 20 },
+    { header: ['Orders', 'Created At'], key: 'createdAt', width: 12 },
+    { header: ['Orders', 'Updated At'], key: 'updatedAt', width: 12 },
 ]
 
 const getColumnLetters = (worksheet, colName) => {
@@ -37,7 +37,7 @@ const getColumnLetters = (worksheet, colName) => {
 }
 
 const setOrderTotalFormula = (worksheet) => {
-    const startRow = 2;
+    const startRow = 3;
     const endRow = worksheet.lastRow.number;
     const numberFormat = `₹0,000.00`;
 

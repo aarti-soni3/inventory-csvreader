@@ -76,8 +76,28 @@ module.exports.exportData = async (req, res) => {
 
         const workbook = createWorkbook('Orders');
         const worksheet = workbook.getWorksheet('Orders');
-        worksheet.columns = orderTableColumns;
 
+        const startCell = worksheet.getCell(1, 1)
+        const offset = orderTableColumns.length - 1;
+
+        const topRow = startCell.row;
+        const leftCol = startCell.col;
+        const bottomRow = startCell.row;
+        const rightCol = startCell.col + offset;
+        const headerAlignment = {
+            vertical: 'middle',
+            horizontal: 'center',
+        };
+
+        worksheet.mergeCells(topRow, leftCol, bottomRow, rightCol);
+        const headerRow = worksheet.getRow(1, 1);
+        const subHeaderRow = worksheet.getRow(2);
+        headerRow.font = { bold: true, size: 15 }
+        subHeaderRow.font = { bold: true }
+        startCell.alignment = headerAlignment;
+        subHeaderRow.alignment = headerAlignment;
+
+        worksheet.columns = orderTableColumns;
         const newRows = worksheet.addRows(uniqueOrders);
         setOrderTotalFormula(worksheet);
 
